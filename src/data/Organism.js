@@ -43,7 +43,10 @@ export default class Organism {
       this.speciation();
     }
     // correlates with size on avg
-    this.lifespan = this.genome.sum() + 1;
+    const genomeSum = this.genome
+      .reduce((a, b) => a.concat(b), [])
+      .reduce((c, d) => c + d, 0);
+    this.lifespan = genomeSum + 1;
     // correlates with size directly
     this.reproductiveRate = this.shape[0] * this.shape[1] + 1;
     this.survivalCheck();
@@ -64,7 +67,7 @@ export default class Organism {
     this.biome.dead if cull limit has been reached in this's
     location.
     */
-    section = unrollSection(
+    const section = unrollSection(
       this.biome.occupiedLandscape,
       this.x[0],
       this.x[1],
@@ -92,7 +95,7 @@ export default class Organism {
 
   disoccupy() {
     /*
-    When this.isAlive turns to False, this.biome is told
+    When this.isAlive turns to false, this.biome is told
     that the space this was occupying is no longer
     occupied by this.
     */
@@ -106,7 +109,10 @@ export default class Organism {
   speciation() {
     let Max = this.shape[0] * this.shape[1] * 9;
     let temp = randomInt(0, 4);
-    if (this.genome.sum() > Max * 0.1 * this.biome.grow) {
+    const genomeSum = this.genome
+      .reduce((a, b) => a.concat(b), [])
+      .reduce((c, d) => c + d, 0);
+    if (genomeSum > Max * 0.1 * this.biome.grow) {
       if (temp === 0) {
         this.growTop();
       } else if (temp === 1) {
@@ -116,7 +122,7 @@ export default class Organism {
       } else {
         this.growLeft();
       }
-    } else if (this.genome.sum() < Max * 0.1 * this.biome.shrink) {
+    } else if (genomeSum < Max * 0.1 * this.biome.shrink) {
       if (temp == 0) {
         this.shrinkTop();
       } else if (temp === 1) {
@@ -161,7 +167,7 @@ export default class Organism {
   mutate() {
     // mutate values of genome
     const mutType = randomInt(1, 3);
-    const childGenome = [...this.genome];
+    const childGenome = [...this.genome]; // Too shallow
     const { height, width } = this.shape;
     const mutations = randomInt(1, 4);
     for (let i = 0; i < mutations; i++) {
@@ -195,20 +201,80 @@ export default class Organism {
       this.x[1] >= this.biome.landscape[0].length ||
       this.y[1] >= this.biome.landscape.length
     ) {
-      this.alive = False;
+      this.alive = false;
       return;
     }
     if (this.biome.cull && !this.cullCheck()) {
-      this.alive = False;
+      this.alive = false;
       return;
     }
     // arbitrary fitness function
-    section = unrollSection(
+    const section = unrollSection(
       this.biome.landscape,
       this.x[0],
       this.x[1],
       this.y[0],
       this.y[1]
     );
+    const maxPossibleScore = this.shape[0] * this.shape[1] * 9;
+    const sectionSum = section.reduce((a, b) => a + b, 0);
+    const environmentScore = sectionSum / maxPossibleScore;
+    const genomeSum = this.genome
+      .reduce((a, b) => a.concat(b), [])
+      .reduce((c, d) => c + d, 0);
+    const organismScore = genomeSum / maxPossibleScore;
+    const difference = Math.abs(environmentScore - organismScore);
+    if (difference > this.biome.robust) {
+      this.alive = false;
+    }
+  }
+
+  step() {
+    this.age++;
+    if (this.age % this.reproductiveRate === 0) {
+      this.spawn();
+    }
+    this.survivalCheck();
+    if (!this.alive) {
+      this.disoccupy();
+    }
+  }
+
+  // grow this.genome
+  growTop() {
+    // add randomly generated row to top
+    const { height, width } = this.shape;
+    this.shape = (height + 1, width);
+    const newRow = new Array(width).fill(0).map(() => randomInt(0, 10));
+    this.genome.unshift(newRow);
+    this.y[0]--;
+  }
+  growBottom() {
+    // add randomly generated row to bottom
+    const { height, width } = this.shape;
+    this.shape = (height + 1, width);
+    const newRow = new Array(width).fill(0).map(() => randomInt(0, 10));
+    this.genome.push(newRow);
+    this.y[1]++;
+  }
+  growLeft() {
+    // add randomly generated column to left
+    const { height, width } = this.shape;
+    this.shape = (height + 1, width);
+    const newRow = new Array(width).fill(0).map(() => randomInt(0, 10));
+    this.genome.forEach((array, i) => {
+      array.unshift(newRow[i]);
+    });
+    this.x[0]--;
+  }
+  growRight() {
+    // add randomly generated column to right
+    const { height, width } = this.shape;
+    this.shape = (height + 1, width);
+    const newRow = new Array(width).fill(0).map(() => randomInt(0, 10));
+    this.genome.forEach((array, i) => {
+      array.push(newRow[i]);
+    });
+    this.x[1]++;
   }
 }
