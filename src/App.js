@@ -1,9 +1,15 @@
 import React, { Component } from "react";
 import "./App.css";
 
+import TestSVG from "./components/TestSVG";
+
 class App extends Component {
   render() {
-    return <div>Hi</div>;
+    return (
+      <div>
+        <TestSVG />
+      </div>
+    );
   }
 }
 
