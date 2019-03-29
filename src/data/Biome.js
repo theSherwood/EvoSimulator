@@ -2,14 +2,28 @@ import Organism from "./Organism";
 import { randomInt } from "../helpers/dataHelpers";
 
 export default class Biome {
-  constructor(height, width, order, robust, grow, shrink) {
+  constructor(height, width, order, cull, robust, grow, shrink, keepAccounts) {
     this.landscape = this.createLandscape(height, width, order);
+    // stores how many organisms are superimposed on each cell of the landscape
     this.occupiedLandscape = this.emptyLandscape(height, width);
-    this.time = 0;
-    this.livingArray = [];
-    this.dead = [];
-    this.keepAccounts = true;
-    this.history = {};
+    // The Accounts:
+    this.time = 0; // counter for time steps
+    this.livingArray = []; // organisms currently alive
+    this.keepAccounts = keepAccounts;
+    if (this.keepAccounts) {
+      // accounting isn't generally necessary (False by default)
+      this.dead = []; // organisms that have died
+      this.aborts = []; // organisms that couldn't survive where they were spawned
+      this.history = {}; // screenshots this.alive per time step
+    } else {
+      this.dead = 0; // counts dead organisms rather than stores them
+    }
+
+    // Auxiliary Parameters:
+    this.robust = robust; // survival margin for organsims relative to landscape
+    this.cull = cull; // number of organisms that can be superimposed
+    this.grow = grow; // threshold for organisms to grow
+    this.shrink = shrink; // threshold for organisms to shrink
   }
 
   emptyLandscape(height, width) {
