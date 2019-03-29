@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import "./App.css";
 
-import TestSVG from "./components/TestSVG";
+import Canvas from "./components/Canvas";
 
 class App extends Component {
   render() {
     return (
       <div>
-        <TestSVG />
+        <Canvas />
       </div>
     );
   }
