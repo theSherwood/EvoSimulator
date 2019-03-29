@@ -1,5 +1,5 @@
 import uuid from "uuid";
-import { randomInt } from "../helpers/dataHelpers";
+import { randomInt, unrollSection } from "../helpers/dataHelpers";
 
 export default class Organism {
   /*
@@ -64,6 +64,17 @@ export default class Organism {
     this.biome.dead if cull limit has been reached in this's
     location.
     */
+    section = unrollSection(
+      this.biome.occupiedLandscape,
+      this.x[0],
+      this.x[1],
+      this.y[0],
+      this.y[1]
+    );
+    if (Math.max.apply(Math, section) > this.biome.cull) {
+      return false;
+    }
+    return true;
   }
 
   occupy() {
@@ -172,6 +183,32 @@ export default class Organism {
   survivalCheck() {
     if (this.age === this.lifespan) {
       this.isAlive = false;
+      return;
     }
+    if (this.genome.length <= 0 || this.genome[0].length <= 0) {
+      this.isAlive = false;
+      return;
+    }
+    if (
+      this.x[0] < 0 ||
+      this.y[0] < 0 ||
+      this.x[1] >= this.biome.landscape[0].length ||
+      this.y[1] >= this.biome.landscape.length
+    ) {
+      this.alive = False;
+      return;
+    }
+    if (this.biome.cull && !this.cullCheck()) {
+      this.alive = False;
+      return;
+    }
+    // arbitrary fitness function
+    section = unrollSection(
+      this.biome.landscape,
+      this.x[0],
+      this.x[1],
+      this.y[0],
+      this.y[1]
+    );
   }
 }
