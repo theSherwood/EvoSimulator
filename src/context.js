@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { createLandscape, emptyLandscape } from "./helpers/landscape";
+import Biome from "./data/Biome";
 
 const Context = React.createContext();
 
@@ -16,28 +16,30 @@ export class Provider extends Component {
 
     const { height, width, order } = props;
 
+    const biome = new Biome(height, width, order);
+
     this.state = {
-      landscape: createLandscape(height, width, order),
-      occupiedLandscape: emptyLandscape(height, width),
+      landscape: biome.landscape,
+      occupiedLandscape: biome.occupiedLandscape,
       cellHeight: 100 / height,
       cellWidth: 100 / width,
       dispatch: action => this.setState(state => reducer(state, action))
     };
   }
 
-  componentDidMount() {
-    this.timerID = setInterval(() => this.step(), 1000);
-  }
+  // componentDidMount() {
+  //   this.timerID = setInterval(() => this.step(), 1000);
+  // }
 
-  componentWillUnmount() {
-    clearInterval(this.timerID);
-  }
+  // componentWillUnmount() {
+  //   clearInterval(this.timerID);
+  // }
 
-  step() {
-    this.setState({
-      occupiedLandscape: this.state.occupiedLandscape
-    });
-  }
+  // step() {
+  //   this.setState({
+  //     occupiedLandscape: this.state.occupiedLandscape
+  //   });
+  // }
 
   render() {
     return (
