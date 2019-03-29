@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from "react";
-import Organism from "./Organism";
+import OrganismComp from "./OrganismComp";
 import { Consumer } from "../context";
 
 class Ecology extends Component {
@@ -10,7 +10,7 @@ class Ecology extends Component {
           const { landscape, cellHeight, cellWidth } = value;
           return (
             <Fragment>
-              <Organism />
+              <OrganismComp />
             </Fragment>
           );
         }}
