@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from "react";
-import OrganismComp from "./OrganismComp";
+import Organism from "./Organism";
 import { Consumer } from "../context";
 
 class Ecology extends Component {
@@ -7,10 +7,16 @@ class Ecology extends Component {
     return (
       <Consumer>
         {value => {
-          const { landscape, cellHeight, cellWidth } = value;
+          const { livingArray, cellHeight, cellWidth } = value;
           return (
             <Fragment>
-              <OrganismComp />
+              {livingArray.map(organism => (
+                <Organism
+                  key={organism.uuid}
+                  cellHeight={cellHeight}
+                  cellWidth={cellWidth}
+                />
+              ))}
             </Fragment>
           );
         }}

@@ -85,7 +85,12 @@ export default class Biome {
   }
 
   seed(minAlive = 10) {
+    let attempts = 0;
+    let attemptsOuter = 0;
+    let max = 0;
     while (true) {
+      attempts++;
+      attemptsOuter++;
       this.time = 0;
       this.livingArray = [];
       if (this.keepAccounts) {
@@ -96,8 +101,16 @@ export default class Biome {
         this.dead = 0;
       }
       new Organism(this);
-      while (0 < this.livingArray.length < minAlive) {
+      while (
+        this.livingArray.length !== 0 &&
+        this.livingArray.length < minAlive
+      ) {
+        max = Math.max(max, this.livingArray.length);
+        attempts++;
         this.step();
+        if (attempts > 500) {
+          return;
+        }
       }
       if (this.livingArray.length >= minAlive) {
         break;

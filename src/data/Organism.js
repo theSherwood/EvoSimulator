@@ -24,7 +24,7 @@ export default class Organism {
     if (!parent) {
       // initialize random single - celled organism
       this.genome = [[randomInt(0, 10)]];
-      this.shape = (1, 1); // (ydimension, xdimension)
+      this.shape = [1, 1]; // (ydimension, xdimension)
       // places this into a random place in this.biome.landscape
       const x = randomInt(0, this.biome.landscape[1].length);
       const y = randomInt(0, this.biome.landscape[0].length);
@@ -88,7 +88,7 @@ export default class Organism {
     */
     for (let i = this.y[0]; i < this.y[1] + 1; i++) {
       for (let j = this.x[0]; j < this.x[1] + 1; j++) {
-        this.biome.occupiedLandscape[(i, j)]++;
+        this.biome.occupiedLandscape[i][j]++;
       }
     }
   }
@@ -101,7 +101,7 @@ export default class Organism {
     */
     for (let i = this.y[0]; i < this.y[1] + 1; i++) {
       for (let j = this.x[0]; j < this.x[1] + 1; j++) {
-        this.biome.occupiedLandscape[(i, j)]--;
+        this.biome.occupiedLandscape[i][j]--;
       }
     }
   }
@@ -140,7 +140,7 @@ export default class Organism {
   Create offset relative to this.biome.landscape and
   this.parent.
   */
-    const { height, width } = this.shape;
+    const [height, width] = this.shape;
     const direction = randomInt(0, 4);
     let x = { ...this.x };
     let y = { ...this.y };
@@ -165,19 +165,18 @@ export default class Organism {
   }
 
   mutate() {
-    // mutate values of genome
-    const mutType = randomInt(0, 10);
-    if (mutType) {
-      const childGenome = [...this.genome]; // Too shallow
-      const { height, width } = this.shape;
-      const mutations = randomInt(1, 4);
-      for (let i = 0; i < mutations; i++) {
-        const yloc = randomInt(0, height - 1);
-        const xloc = randomInt(0, width - 1);
-        childGenome[yloc][xloc] = randomInt(0, 10);
-      }
-      return childGenome;
+    const childGenome = [];
+    this.genome.forEach(row => {
+      childGenome.push([...row]);
+    });
+    const [height, width] = this.shape;
+    const mutations = randomInt(1, 4);
+    for (let i = 0; i < mutations; i++) {
+      const yloc = randomInt(0, height - 1);
+      const xloc = randomInt(0, width - 1);
+      childGenome[yloc][xloc] = randomInt(0, 10);
     }
+    return childGenome;
   }
 
   spawn() {
@@ -245,7 +244,7 @@ export default class Organism {
   // grow this.genome
   growTop() {
     // add randomly generated row to top
-    const { height, width } = this.shape;
+    const [height, width] = this.shape;
     this.shape = (height + 1, width);
     const newRow = new Array(width).fill(0).map(() => randomInt(0, 10));
     this.genome.unshift(newRow);
@@ -253,7 +252,7 @@ export default class Organism {
   }
   growBottom() {
     // add randomly generated row to bottom
-    const { height, width } = this.shape;
+    const [height, width] = this.shape;
     this.shape = (height + 1, width);
     const newRow = new Array(width).fill(0).map(() => randomInt(0, 10));
     this.genome.push(newRow);
@@ -261,7 +260,7 @@ export default class Organism {
   }
   growLeft() {
     // add randomly generated column to left
-    const { height, width } = this.shape;
+    const [height, width] = this.shape;
     this.shape = (height, width + 1);
     const newRow = new Array(height).fill(0).map(() => randomInt(0, 10));
     this.genome.forEach((array, i) => {
@@ -271,7 +270,7 @@ export default class Organism {
   }
   growRight() {
     // add randomly generated column to right
-    const { height, width } = this.shape;
+    const [height, width] = this.shape;
     this.shape = (height, width + 1);
     const newRow = new Array(height).fill(0).map(() => randomInt(0, 10));
     this.genome.forEach((array, i) => {
@@ -284,7 +283,7 @@ export default class Organism {
   shrinkTop() {
     // remove top row
     if (this.y[1] - this.y[0] < 1) return;
-    const { height, width } = this.shape;
+    const [height, width] = this.shape;
     this.shape = (height - 1, width);
     this.genome = this.genome.slice(1);
     this.y[0]++;
@@ -292,7 +291,7 @@ export default class Organism {
   shrinkBottom() {
     // remove bottom row
     if (this.y[1] - this.y[0] < 1) return;
-    const { height, width } = this.shape;
+    const [height, width] = this.shape;
     this.shape = (height - 1, width);
     this.genome = this.genome.slice(0, -1);
     this.y[1]--;
@@ -300,7 +299,7 @@ export default class Organism {
   shrinkLeft() {
     // remove left column
     if (this.x[1] - this.x[0] < 1) return;
-    const { height, width } = this.shape;
+    const [height, width] = this.shape;
     this.shape = (height, width - 1);
     this.genome.forEach(array => {
       array.slice(1);
@@ -310,7 +309,7 @@ export default class Organism {
   shrinkRight() {
     // remove right column
     if (this.x[1] - this.x[0] < 1) return;
-    const { height, width } = this.shape;
+    const [height, width] = this.shape;
     this.shape = (height, width - 1);
     this.genome.forEach(array => {
       array.slice(0, -1);

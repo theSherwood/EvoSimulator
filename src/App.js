@@ -8,7 +8,7 @@ import Canvas from "./components/Canvas";
 class App extends Component {
   render() {
     return (
-      <Provider height={100} width={100} order={96}>
+      <Provider height={50} width={50} order={96}>
         <Canvas />
       </Provider>
     );

@@ -1,9 +1,8 @@
 import React, { Component, Fragment } from "react";
 import { Consumer } from "../context";
-import Ecology from "./Ecology";
 import Cell from "./Cell";
 
-class Biome extends Component {
+class Landscape extends Component {
   render() {
     return (
       <Consumer>
@@ -14,7 +13,7 @@ class Biome extends Component {
               {landscape.map((row, i) =>
                 row.map((cell, j) => (
                   <Cell
-                    key={`l${i},${j}`}
+                    key={`${i},${j}`}
                     y={`${i * cellHeight}%`}
                     x={`${j * cellWidth}%`}
                     height={`${cellHeight}%`}
@@ -24,7 +23,6 @@ class Biome extends Component {
                   />
                 ))
               )}
-              <Ecology landscape={landscape} />
             </Fragment>
           );
         }}
@@ -33,4 +31,4 @@ class Biome extends Component {
   }
 }
 
-export default Biome;
+export default Landscape;

@@ -13,7 +13,6 @@ const reducer = (state, action) => {
 export class Provider extends Component {
   constructor(props) {
     super(props);
-
     const { height, width, order } = props;
 
     this.biome = new Biome(height, width, order, 1, 5, 7, 2, true);
@@ -25,6 +24,9 @@ export class Provider extends Component {
       cellWidth: 100 / width,
       dispatch: action => this.setState(state => reducer(state, action))
     };
+
+    this.biome.seed();
+    this.state.livingArray = this.biome.livingArray;
   }
 
   // componentDidMount() {
@@ -43,6 +45,7 @@ export class Provider extends Component {
   // }
 
   render() {
+    console.log("CONTEXT PROVIDER RENDER");
     return (
       <Context.Provider value={this.state}>
         {this.props.children}
