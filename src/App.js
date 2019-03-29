@@ -1,14 +1,16 @@
 import React, { Component } from "react";
 import "./App.css";
 
+import { Provider } from "./context";
+
 import Canvas from "./components/Canvas";
 
 class App extends Component {
   render() {
     return (
-      <div>
+      <Provider height={100} width={100} order={96}>
         <Canvas />
-      </div>
+      </Provider>
     );
   }
 }

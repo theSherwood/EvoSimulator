@@ -6,7 +6,7 @@ export default class Canvas extends Component {
     return (
       <svg style={{ position: "absolute", width: "100%", height: "100%" }}>
         <rect x="0" y="0" width="100%" height="100%" fill="rgb(0,0,0)" />
-        <Biome height={100} width={100} order={96} />
+        <Biome />
       </svg>
     );
   }
