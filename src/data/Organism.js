@@ -260,8 +260,8 @@ export default class Organism {
   growLeft() {
     // add randomly generated column to left
     const { height, width } = this.shape;
-    this.shape = (height + 1, width);
-    const newRow = new Array(width).fill(0).map(() => randomInt(0, 10));
+    this.shape = (height, width + 1);
+    const newRow = new Array(height).fill(0).map(() => randomInt(0, 10));
     this.genome.forEach((array, i) => {
       array.unshift(newRow[i]);
     });
@@ -270,11 +270,49 @@ export default class Organism {
   growRight() {
     // add randomly generated column to right
     const { height, width } = this.shape;
-    this.shape = (height + 1, width);
-    const newRow = new Array(width).fill(0).map(() => randomInt(0, 10));
+    this.shape = (height, width + 1);
+    const newRow = new Array(height).fill(0).map(() => randomInt(0, 10));
     this.genome.forEach((array, i) => {
       array.push(newRow[i]);
     });
     this.x[1]++;
+  }
+
+  // shrink self.genome:
+  shrinkTop() {
+    // remove top row
+    if (this.y[1] - this.y[0] < 1) return;
+    const { height, width } = this.shape;
+    this.shape = (height - 1, width);
+    this.genome = this.genome.slice(1);
+    this.y[0]++;
+  }
+  shrinkBottom() {
+    // remove bottom row
+    if (this.y[1] - this.y[0] < 1) return;
+    const { height, width } = this.shape;
+    this.shape = (height - 1, width);
+    this.genome = this.genome.slice(0, -1);
+    this.y[1]--;
+  }
+  shrinkLeft() {
+    // remove left column
+    if (this.x[1] - this.x[0] < 1) return;
+    const { height, width } = this.shape;
+    this.shape = (height, width - 1);
+    this.genome.forEach(array => {
+      array.slice(1);
+    });
+    this.x[0]++;
+  }
+  shrinkRight() {
+    // remove right column
+    if (this.x[1] - this.x[0] < 1) return;
+    const { height, width } = this.shape;
+    this.shape = (height, width - 1);
+    this.genome.forEach(array => {
+      array.slice(0, -1);
+    });
+    this.x[1]--;
   }
 }
