@@ -16,11 +16,11 @@ export class Provider extends Component {
 
     const { height, width, order } = props;
 
-    const biome = new Biome(height, width, order);
+    this.biome = new Biome(height, width, order, 1, 5, 7, 2, true);
 
     this.state = {
-      landscape: biome.landscape,
-      occupiedLandscape: biome.occupiedLandscape,
+      landscape: this.biome.landscape,
+      livingArray: this.biome.livingArray,
       cellHeight: 100 / height,
       cellWidth: 100 / width,
       dispatch: action => this.setState(state => reducer(state, action))
@@ -28,16 +28,17 @@ export class Provider extends Component {
   }
 
   // componentDidMount() {
-  //   this.timerID = setInterval(() => this.step(), 1000);
+  //   this.timerID = setInterval(() => this.tick(), 10000);
   // }
 
   // componentWillUnmount() {
   //   clearInterval(this.timerID);
   // }
 
-  // step() {
+  // tick() {
+  //   this.biome.step();
   //   this.setState({
-  //     occupiedLandscape: this.state.occupiedLandscape
+  //     livingArray: this.biome.livingArray
   //   });
   // }
 
