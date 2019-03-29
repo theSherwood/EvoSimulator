@@ -123,7 +123,7 @@ export default class Organism {
         this.growLeft();
       }
     } else if (genomeSum < Max * 0.1 * this.biome.shrink) {
-      if (temp == 0) {
+      if (temp === 0) {
         this.shrinkTop();
       } else if (temp === 1) {
         this.shrinkBottom();
@@ -142,8 +142,8 @@ export default class Organism {
   */
     const { height, width } = this.shape;
     const direction = randomInt(0, 4);
-    const x = { ...this.x };
-    const y = { ...this.y };
+    let x = { ...this.x };
+    let y = { ...this.y };
     if (direction < 2) {
       if (direction === 0) {
         // offset right
@@ -161,21 +161,23 @@ export default class Organism {
         y = [this.y[0] - height, this.y[1] - height];
       }
     }
-    return x, y;
+    return { x, y };
   }
 
   mutate() {
     // mutate values of genome
-    const mutType = randomInt(1, 3);
-    const childGenome = [...this.genome]; // Too shallow
-    const { height, width } = this.shape;
-    const mutations = randomInt(1, 4);
-    for (let i = 0; i < mutations; i++) {
-      const yloc = randomInt(0, height - 1);
-      const xloc = randomInt(0, width - 1);
-      childGenome[yloc][xloc] = randomInt(0, 10);
+    const mutType = randomInt(0, 10);
+    if (mutType) {
+      const childGenome = [...this.genome]; // Too shallow
+      const { height, width } = this.shape;
+      const mutations = randomInt(1, 4);
+      for (let i = 0; i < mutations; i++) {
+        const yloc = randomInt(0, height - 1);
+        const xloc = randomInt(0, width - 1);
+        childGenome[yloc][xloc] = randomInt(0, 10);
+      }
+      return childGenome;
     }
-    return childGenome;
   }
 
   spawn() {
