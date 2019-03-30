@@ -15,6 +15,9 @@ class Ecology extends Component {
                   key={organism.uuid}
                   cellHeight={cellHeight}
                   cellWidth={cellWidth}
+                  x={organism.x}
+                  y={organism.y}
+                  genome={organism.genome}
                 />
               ))}
             </Fragment>
