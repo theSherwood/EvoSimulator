@@ -52,7 +52,7 @@ export default class Organism {
     this.survivalCheck();
     if (this.isAlive) {
       this.biome.livingArray.push(this);
-      this.occupy(); // enters location info on this.biome.occupation
+      this.occupy(); // enters location info on this.biome.occupiedLandscape
     } else {
       // this doesn't survive birth
       if (this.biome.keepAccounts) {
@@ -67,15 +67,14 @@ export default class Organism {
     this.biome.dead if cull limit has been reached in this's
     location.
     */
-    const section = unrollSection(
-      this.biome.occupiedLandscape,
-      this.x[0],
-      this.x[1],
-      this.y[0],
-      this.y[1]
-    );
-    if (Math.max.apply(Math, section) > this.biome.cull) {
-      return false;
+    // console.log(this.age, [...this.biome.occupiedLandscape], this.uuid);
+    for (let i = this.y[0]; i < this.y[1] + 1; i++) {
+      for (let j = this.x[0]; j < this.x[1] + 1; j++) {
+        if (this.biome.occupiedLandscape[i][j] > this.biome.cull) {
+          // console.error(i, j);
+          return false;
+        }
+      }
     }
     return true;
   }
@@ -86,10 +85,19 @@ export default class Organism {
     survivalCheck, this.biome is told what space is being
     occupied by this.
     */
+    let disoccupyFlag = false;
     for (let i = this.y[0]; i < this.y[1] + 1; i++) {
       for (let j = this.x[0]; j < this.x[1] + 1; j++) {
         this.biome.occupiedLandscape[i][j]++;
+        if (this.biome.occupiedLandscape[i][j] > this.biome.cull) {
+          // console.error("occupied greater than 1");
+          disoccupyFlag = true;
+        }
       }
+    }
+    if (disoccupyFlag) {
+      this.disoccupy();
+      this.isAlive = false;
     }
   }
 
@@ -102,6 +110,9 @@ export default class Organism {
     for (let i = this.y[0]; i < this.y[1] + 1; i++) {
       for (let j = this.x[0]; j < this.x[1] + 1; j++) {
         this.biome.occupiedLandscape[i][j]--;
+        if (this.biome.occupiedLandscape[i][j] < 0) {
+          // console.error("occupied less than 0");
+        }
       }
     }
   }
@@ -202,11 +213,11 @@ export default class Organism {
       this.x[1] >= this.biome.landscape[0].length ||
       this.y[1] >= this.biome.landscape.length
     ) {
-      this.alive = false;
+      this.isAlive = false;
       return;
     }
     if (this.biome.cull && !this.cullCheck()) {
-      this.alive = false;
+      this.isAlive = false;
       return;
     }
     // arbitrary fitness function
@@ -226,7 +237,7 @@ export default class Organism {
     const organismScore = genomeSum / maxPossibleScore;
     const difference = Math.abs(environmentScore - organismScore);
     if (difference > this.biome.robust) {
-      this.alive = false;
+      this.isAlive = false;
     }
   }
 
@@ -236,7 +247,7 @@ export default class Organism {
       this.spawn();
     }
     this.survivalCheck();
-    if (!this.alive) {
+    if (!this.isAlive) {
       this.disoccupy();
     }
   }
@@ -244,39 +255,47 @@ export default class Organism {
   // grow this.genome
   growTop() {
     // add randomly generated row to top
+    // console.log("GROWT", this.genome);
     const [height, width] = this.shape;
-    this.shape = (height + 1, width);
+    this.shape = [height + 1, width];
     const newRow = new Array(width).fill(0).map(() => randomInt(0, 10));
     this.genome.unshift(newRow);
     this.y[0]--;
+    // this.badMutation();
   }
   growBottom() {
     // add randomly generated row to bottom
+    // console.log("GROWB", this.genome);
     const [height, width] = this.shape;
-    this.shape = (height + 1, width);
+    this.shape = [height + 1, width];
     const newRow = new Array(width).fill(0).map(() => randomInt(0, 10));
     this.genome.push(newRow);
     this.y[1]++;
+    // this.badMutation();
   }
   growLeft() {
     // add randomly generated column to left
+    // console.log("GROWL", this.genome);
     const [height, width] = this.shape;
-    this.shape = (height, width + 1);
+    this.shape = [height, width + 1];
     const newRow = new Array(height).fill(0).map(() => randomInt(0, 10));
     this.genome.forEach((array, i) => {
       array.unshift(newRow[i]);
     });
     this.x[0]--;
+    // this.badMutation();
   }
   growRight() {
     // add randomly generated column to right
+    // console.log("GROWR", this.genome);
     const [height, width] = this.shape;
-    this.shape = (height, width + 1);
+    this.shape = [height, width + 1];
     const newRow = new Array(height).fill(0).map(() => randomInt(0, 10));
     this.genome.forEach((array, i) => {
       array.push(newRow[i]);
     });
     this.x[1]++;
+    // this.badMutation();
   }
 
   // shrink self.genome:
@@ -284,7 +303,7 @@ export default class Organism {
     // remove top row
     if (this.y[1] - this.y[0] < 1) return;
     const [height, width] = this.shape;
-    this.shape = (height - 1, width);
+    this.shape = [height - 1, width];
     this.genome = this.genome.slice(1);
     this.y[0]++;
   }
@@ -292,7 +311,7 @@ export default class Organism {
     // remove bottom row
     if (this.y[1] - this.y[0] < 1) return;
     const [height, width] = this.shape;
-    this.shape = (height - 1, width);
+    this.shape = [height - 1, width];
     this.genome = this.genome.slice(0, -1);
     this.y[1]--;
   }
@@ -300,7 +319,7 @@ export default class Organism {
     // remove left column
     if (this.x[1] - this.x[0] < 1) return;
     const [height, width] = this.shape;
-    this.shape = (height, width - 1);
+    this.shape = [height, width - 1];
     this.genome.forEach(array => {
       array.slice(1);
     });
@@ -310,10 +329,21 @@ export default class Organism {
     // remove right column
     if (this.x[1] - this.x[0] < 1) return;
     const [height, width] = this.shape;
-    this.shape = (height, width - 1);
+    this.shape = [height, width - 1];
     this.genome.forEach(array => {
       array.slice(0, -1);
     });
     this.x[1]--;
+  }
+
+  badMutation() {
+    let length = 0;
+    this.genome.forEach(row => {
+      if (length === 0) {
+        length = row.length;
+      } else if (length !== row.length) {
+        // console.error("BAD GENOME", this.genome);
+      }
+    });
   }
 }
