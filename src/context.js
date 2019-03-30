@@ -15,11 +15,12 @@ export class Provider extends Component {
     super(props);
     const { height, width, order } = props;
 
-    this.biome = new Biome(height, width, order, 1, 5, 7, 2, true);
+    this.biome = new Biome(height, width, order, 1, 0.5, 7, 2, false);
 
     this.state = {
       landscape: this.biome.landscape,
       livingArray: this.biome.livingArray,
+      // occupiedLandscape: this.biome.occupiedLandscape,
       cellHeight: 100 / height,
       cellWidth: 100 / width,
       dispatch: action => this.setState(state => reducer(state, action))
@@ -27,25 +28,25 @@ export class Provider extends Component {
 
     this.biome.seed();
     this.state.livingArray = this.biome.livingArray;
+    // this.state.occupiedLandscape = this.biome.occupiedLandscape;
   }
 
-  // componentDidMount() {
-  //   this.timerID = setInterval(() => this.tick(), 10000);
-  // }
+  componentDidMount() {
+    this.timerID = setInterval(() => this.tick(), 50);
+  }
 
-  // componentWillUnmount() {
-  //   clearInterval(this.timerID);
-  // }
+  componentWillUnmount() {
+    clearInterval(this.timerID);
+  }
 
-  // tick() {
-  //   this.biome.step();
-  //   this.setState({
-  //     livingArray: this.biome.livingArray
-  //   });
-  // }
+  tick() {
+    this.biome.step();
+    this.setState({
+      livingArray: this.biome.livingArray
+    });
+  }
 
   render() {
-    console.log("CONTEXT PROVIDER RENDER");
     return (
       <Context.Provider value={this.state}>
         {this.props.children}
