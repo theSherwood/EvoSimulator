@@ -124,18 +124,16 @@ export default class Organism {
       .reduce((a, b) => a.concat(b), [])
       .reduce((c, d) => c + d, 0);
     if (genomeSum > Max * 0.1 * this.biome.grow) {
-      this.badMutation("grow start");
       if (temp === 0) {
         this.growTop();
       } else if (temp === 1) {
         this.growBottom();
       } else if (temp === 2) {
-        // this.growRight();
+        this.growRight();
       } else {
         this.growLeft();
       }
     } else if (genomeSum < Max * 0.1 * this.biome.shrink) {
-      this.badMutation("shrink start");
       if (temp === 0) {
         this.shrinkTop();
       } else if (temp === 1) {
@@ -265,31 +263,26 @@ export default class Organism {
     const oldGenome = this.copy(this.genome);
     const oldShape = [...this.shape];
     // add randomly generated row to top
-    // console.log("GROWT", this.genome);
     const [height, width] = this.shape;
     const newRow = new Array(width).fill(0).map(() => randomInt(0, 10));
     this.genome.unshift(newRow);
     this.y[0]--;
     this.shape = [this.genome.length, this.genome[0].length];
-    this.badMutation("grow top end", oldGenome, [...this.shape], oldShape);
   }
   growBottom() {
     const oldGenome = this.copy(this.genome);
     const oldShape = [...this.shape];
     // add randomly generated row to bottom
-    // console.log("GROWB", this.genome);
     const [height, width] = this.shape;
     const newRow = new Array(width).fill(0).map(() => randomInt(0, 10));
     this.genome.push(newRow);
     this.y[1]++;
     this.shape = [this.genome.length, this.genome[0].length];
-    this.badMutation("grow bottom end", oldGenome, [...this.shape], oldShape);
   }
   growLeft() {
     const oldGenome = this.copy(this.genome);
     const oldShape = [...this.shape];
     // add randomly generated column to left
-    // console.log("GROWL", this.genome);
     const [height, width] = this.shape;
     const newRow = new Array(height).fill(0).map(() => randomInt(0, 10));
     this.genome.forEach((array, i) => {
@@ -297,86 +290,48 @@ export default class Organism {
     });
     this.x[0]--;
     this.shape = [this.genome.length, this.genome[0].length];
-    this.badMutation("grow left end", oldGenome, [...this.shape], oldShape);
   }
   growRight() {
     const oldGenome = this.copy(this.genome);
     const oldShape = [...this.shape];
     // add randomly generated column to right
-    // console.log("GROWR", this.genome);
     const [height, width] = this.shape;
     const newRow = new Array(height).fill(0).map(() => randomInt(0, 10));
     this.genome.forEach((array, i) => {
       array.push(newRow[i]);
     });
-    this.x[1] = this.x[0] + this.genome[0].length;
+    this.x[1] = this.x[0] + this.genome[0].length - 1;
     this.shape = [this.genome.length, this.genome[0].length];
-    this.badMutation("grow right end", oldGenome, [...this.shape], oldShape);
   }
 
   // shrink self.genome:
   shrinkTop() {
-    const oldGenome = this.copy(this.genome);
     // remove top row
     if (this.y[1] - this.y[0] < 1) return;
-    const [height, width] = this.shape;
     this.genome = this.genome.slice(1);
     this.y[0]++;
     this.shape = [this.genome.length, this.genome[0].length];
-    this.badMutation("shrink top end");
   }
   shrinkBottom() {
-    const oldGenome = this.copy(this.genome);
     // remove bottom row
     if (this.y[1] - this.y[0] < 1) return;
-    const [height, width] = this.shape;
     this.genome = this.genome.slice(0, -1);
     this.y[1]--;
     this.shape = [this.genome.length, this.genome[0].length];
-    this.badMutation("shrink bottom end");
   }
   shrinkLeft() {
-    const oldGenome = this.copy(this.genome);
     // remove left column
     if (this.x[1] - this.x[0] < 1) return;
-    const [height, width] = this.shape;
-    this.genome.forEach(array => {
-      array.slice(1);
-    });
+    this.genome = this.genome.map(array => array.slice(1));
     this.x[0]++;
     this.shape = [this.genome.length, this.genome[0].length];
-    this.badMutation("shrink left end");
   }
   shrinkRight() {
-    const oldGenome = this.copy(this.genome);
     // remove right column
     if (this.x[1] - this.x[0] < 1) return;
-    const [height, width] = this.shape;
-    this.genome.forEach(array => {
-      array.slice(0, -1);
-    });
+    this.genome = this.genome.map(array => array.slice(0, -1));
     this.x[1]--;
     this.shape = [this.genome.length, this.genome[0].length];
-    this.badMutation("shrink right end");
-  }
-
-  badMutation(message, oldGenome, newShape, oldShape) {
-    let length = 0;
-
-    this.genome.forEach(row => {
-      if (length === 0) {
-        length = row.length;
-      } else if (length !== row.length) {
-        console.error(
-          "BAD GENOME",
-          this.copy(this.genome),
-          message,
-          oldGenome,
-          newShape,
-          oldShape
-        );
-      }
-    });
   }
 
   copy(genome) {
