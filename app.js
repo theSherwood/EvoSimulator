@@ -15,7 +15,7 @@ const docWidth = document.documentElement.clientWidth;
 const docHeight = document.documentElement.clientHeight;
 const screenRatio = docWidth / docHeight;
 
-let height = 100,
+let height = 75,
   width = Math.round(height * screenRatio),
   order = 98,
   cull = 1,
@@ -78,7 +78,8 @@ function positionCanvas() {
 
 function tick() {
   // console.log(timeStep);
-  if (stepsCounter > 1000) {
+  // Run for 5 minutes (300s is 5min)
+  if (stepsCounter > (1000 / timeStep) * 300) {
     stepsCounter = 0;
     seedNewBiome();
   }
