@@ -153,6 +153,10 @@ function handleKeydown(e) {
       e.preventDefault();
       reseedBiome();
       break;
+    case "l":
+      e.preventDefault();
+      location.reload(true);
+      break;
     case " ":
       e.preventDefault();
       pause();
