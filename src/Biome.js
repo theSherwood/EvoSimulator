@@ -16,7 +16,7 @@ export default class Biome {
       // accounting isn't generally necessary (False by default)
       this.dead = []; // organisms that have died
       this.aborts = []; // organisms that couldn't survive where they were spawned
-      this.history = {}; // screenshots this.alive per time step
+      this.history = {}; // screenshots The Accounts (other than this.history) every timestep
     } else {
       this.dead = 0; // counts dead organisms rather than stores them
     }
@@ -83,9 +83,15 @@ export default class Biome {
           return false;
         }
       });
-      if (this.keepAccounts) {
-        this.history[this.time] = this.livingArray;
-      }
+    }
+    if (this.keepAccounts) {
+      this.history[this.time] = {
+        newLife: [...this.newLife],
+        newDead: [...this.newDead],
+        livingArray: [...this.livingArray],
+        dead: [...this.dead],
+        aborts: [...this.aborts]
+      };
     }
   }
 
