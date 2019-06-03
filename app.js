@@ -10,7 +10,7 @@ let height = 80,
   shrink = 2,
   keepAccounts = false;
 
-let timeStep = 0;
+let timeStep = 100;
 let stepsCounter = 0;
 let cellHeight;
 let cellWidth;
@@ -59,11 +59,11 @@ function positionCanvas() {
 }
 
 function tick() {
-  console.log(timeStep);
-  // if (stepsCounter > 200) {
-  //   stepsCounter = 0;
-  //   biome.seed();
-  // }
+  // console.log(timeStep);
+  if (stepsCounter > 100) {
+    stepsCounter = 0;
+    seedNewBiome();
+  }
   biome.step();
   stepsCounter++;
   renderLandscape(biome.landscape);
@@ -101,6 +101,7 @@ function adjustSpeed(direction) {
     clearInterval(timerID);
     timerID = setInterval(tick, timeStep);
   }
+  console.log(timeStep);
 }
 
 function handleKeydown(e) {
