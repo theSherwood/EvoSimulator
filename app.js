@@ -15,7 +15,7 @@ const docWidth = document.documentElement.clientWidth;
 const docHeight = document.documentElement.clientHeight;
 const screenRatio = docWidth / docHeight;
 
-let height = 75,
+let height = 130,
   width = Math.round(height * screenRatio),
   order = 98,
   cull = 1,
