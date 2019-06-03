@@ -219,24 +219,25 @@ function renderOrganism(organism) {
 }
 
 function renderReadout(biome) {
-  population.textContent = biome.livingArray.length;
+  population.textContent = pad(biome.livingArray.length, 3);
   newLife.textContent = pad(
     biome.newLife.length +
       biome.history[biome.time].aborts.length -
       biome.history[biome.time - 1].aborts.length,
     3
   );
-  infantMortality.textContent = pad(
-    biome.history[biome.time].aborts.length -
-      biome.history[biome.time - 1].aborts.length,
-    3
-  );
+  infantMortality.textContent = (
+    (biome.history[biome.time].aborts.length -
+      biome.history[biome.time - 1].aborts.length) /
+      Number.parseInt(newLife.textContent) || 0
+  ).toFixed(2);
   newDead.textContent = pad(biome.newDead.length, 3);
   totalDeceased.textContent = biome.dead.length;
   populationChange.textContent = pad(
     biome.history[biome.time].livingArray.length -
       biome.history[biome.time - 1].livingArray.length,
-    3
+    3,
+    true
   );
   elapsedTime.textContent = biome.time;
 }
@@ -244,7 +245,7 @@ function renderReadout(biome) {
 function pad(num, length, withSign = false) {
   const sign = num < 0 ? "-" : "+";
   const zeros = "0000000000000000";
-  const str = Math.abs(num).toString();
+  let str = Math.abs(num).toString();
   const difference = length - str.length;
   str = zeros.slice(0, difference) + str;
   return withSign ? sign + str : str;
