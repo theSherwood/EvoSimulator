@@ -11,8 +11,12 @@ const newDead = document.getElementById("new-dead");
 const totalDeceased = document.getElementById("total-deceased");
 const elapsedTime = document.getElementById("elapsed-time");
 
-let height = 80,
-  width = 160,
+const docWidth = document.documentElement.clientWidth;
+const docHeight = document.documentElement.clientHeight;
+const screenRatio = docWidth / docHeight;
+
+let height = 100,
+  width = Math.round(height * screenRatio),
   order = 98,
   cull = 1,
   robust = 0.3,
@@ -120,30 +124,36 @@ function adjustSpeed(direction) {
 }
 
 function handleKeydown(e) {
-  e.preventDefault();
   // console.log(e);
   switch (e.key) {
     case "ArrowUp":
+      e.preventDefault();
       adjustSpeed("up");
       break;
     case "ArrowDown":
+      e.preventDefault();
       adjustSpeed("down");
       break;
     case "ArrowLeft":
+      e.preventDefault();
       robust = Math.max(biome.robust - 0.1, -0.1);
       biome.robust = robust;
       break;
     case "ArrowRight":
+      e.preventDefault();
       robust = Math.min(biome.robust + 0.1, 1);
       biome.robust = robust;
       break;
     case "s":
+      e.preventDefault();
       seedNewBiome();
       break;
     case "r":
+      e.preventDefault();
       reseedBiome();
       break;
     case " ":
+      e.preventDefault();
       pause();
       break;
   }
