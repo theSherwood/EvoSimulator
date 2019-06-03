@@ -1,0 +1,8 @@
+#canvas {
+  opacity: 0;
+  transition: opacity 1000ms ease-in-out;
+}
+
+#canvas.fully-rendered {
+  opacity: 1;
+}

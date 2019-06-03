@@ -21,23 +21,30 @@ let timerID;
 seedNewBiome();
 
 function seedNewBiome() {
-  clearInterval(timerID);
-  biome = new Biome(
-    height,
-    width,
-    order,
-    cull,
-    robust,
-    grow,
-    shrink,
-    keepAccounts
-  );
-  positionCanvas();
-  renderLandscape(biome.landscape);
-  biome.seed();
-  renderEcology(biome.livingArray);
+  // Effect transition to new biome (fade in/out)
+  const canvas = document.getElementById("canvas");
+  canvas.classList.remove("fully-rendered");
+  setTimeout(() => {
+    clearInterval(timerID);
+    biome = new Biome(
+      height,
+      width,
+      order,
+      cull,
+      robust,
+      grow,
+      shrink,
+      keepAccounts
+    );
+    positionCanvas();
+    renderLandscape(biome.landscape);
+    biome.seed();
+    renderEcology(biome.livingArray);
 
-  timerID = setInterval(tick, timeStep);
+    timerID = setInterval(tick, timeStep);
+
+    canvas.classList.add("fully-rendered");
+  }, 1500);
 }
 
 function reseedBiome() {
@@ -101,11 +108,11 @@ function adjustSpeed(direction) {
     clearInterval(timerID);
     timerID = setInterval(tick, timeStep);
   }
-  console.log(timeStep);
+  // console.log(timeStep);
 }
 
 function handleKeydown(e) {
-  console.log(e);
+  // console.log(e);
   switch (e.key) {
     case "ArrowUp":
       adjustSpeed("up");
