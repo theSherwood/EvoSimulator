@@ -260,8 +260,6 @@ export default class Organism {
 
   // grow this.genome
   growTop() {
-    const oldGenome = this.copy(this.genome);
-    const oldShape = [...this.shape];
     // add randomly generated row to top
     const [height, width] = this.shape;
     const newRow = new Array(width).fill(0).map(() => randomInt(0, 10));
@@ -270,8 +268,6 @@ export default class Organism {
     this.shape = [this.genome.length, this.genome[0].length];
   }
   growBottom() {
-    const oldGenome = this.copy(this.genome);
-    const oldShape = [...this.shape];
     // add randomly generated row to bottom
     const [height, width] = this.shape;
     const newRow = new Array(width).fill(0).map(() => randomInt(0, 10));
@@ -280,8 +276,6 @@ export default class Organism {
     this.shape = [this.genome.length, this.genome[0].length];
   }
   growLeft() {
-    const oldGenome = this.copy(this.genome);
-    const oldShape = [...this.shape];
     // add randomly generated column to left
     const [height, width] = this.shape;
     const newRow = new Array(height).fill(0).map(() => randomInt(0, 10));
@@ -292,8 +286,6 @@ export default class Organism {
     this.shape = [this.genome.length, this.genome[0].length];
   }
   growRight() {
-    const oldGenome = this.copy(this.genome);
-    const oldShape = [...this.shape];
     // add randomly generated column to right
     const [height, width] = this.shape;
     const newRow = new Array(height).fill(0).map(() => randomInt(0, 10));
