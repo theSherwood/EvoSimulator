@@ -1,6 +1,16 @@
 import Biome from "./src/Biome.js";
 import colors from "./src/colors.js";
 
+const canvas = document.getElementById("canvas");
+const root = document.getElementById("root");
+const population = document.getElementById("population");
+const populationChange = document.getElementById("population-change");
+const newLife = document.getElementById("new-life");
+const infantMortality = document.getElementById("infant-mortality");
+const newDead = document.getElementById("new-dead");
+const totalDeceased = document.getElementById("total-deceased");
+const elapsedTime = document.getElementById("elapsed-time");
+
 let height = 80,
   width = 160,
   order = 98,
@@ -8,9 +18,9 @@ let height = 80,
   robust = 0.3,
   grow = 6,
   shrink = 2,
-  keepAccounts = false;
+  keepAccounts = true;
 
-let timeStep = 100;
+let timeStep = 200;
 let stepsCounter = 0;
 let cellHeight;
 let cellWidth;
@@ -22,7 +32,6 @@ seedNewBiome();
 
 function seedNewBiome() {
   // Effect transition to new biome (fade in/out)
-  const canvas = document.getElementById("canvas");
   canvas.classList.remove("fully-rendered");
   setTimeout(() => {
     clearInterval(timerID);
@@ -52,8 +61,6 @@ function reseedBiome() {
 }
 
 function positionCanvas() {
-  const root = document.getElementById("root");
-  const canvas = document.getElementById("canvas");
   const pos = root.getBoundingClientRect();
 
   canvas.style.top = pos.top;
@@ -67,7 +74,7 @@ function positionCanvas() {
 
 function tick() {
   // console.log(timeStep);
-  if (stepsCounter > 100) {
+  if (stepsCounter > 2000) {
     stepsCounter = 0;
     seedNewBiome();
   }
@@ -91,6 +98,7 @@ function tick() {
     biome.seed();
     renderEcology(biome.livingArray);
   }
+  renderReadout(biome);
 }
 
 // window.addEventListener("click", pause, true);
@@ -112,6 +120,7 @@ function adjustSpeed(direction) {
 }
 
 function handleKeydown(e) {
+  e.preventDefault();
   // console.log(e);
   switch (e.key) {
     case "ArrowUp":
@@ -150,7 +159,6 @@ function pause() {
 }
 
 function renderLandscape(landscape) {
-  const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
 
   landscape.forEach((row, i) => {
@@ -174,7 +182,6 @@ function renderEcology(life) {
 }
 
 function renderOrganism(organism) {
-  const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
   const { genome, x, y } = organism;
   if (genome.length !== y[1] - y[0] + 1) {
@@ -209,4 +216,36 @@ function renderOrganism(organism) {
     Math.ceil((x[1] - x[0] + 1) * cellWidth),
     Math.ceil((y[1] - y[0] + 1) * cellHeight)
   );
+}
+
+function renderReadout(biome) {
+  population.textContent = biome.livingArray.length;
+  newLife.textContent = pad(
+    biome.newLife.length +
+      biome.history[biome.time].aborts.length -
+      biome.history[biome.time - 1].aborts.length,
+    3
+  );
+  infantMortality.textContent = pad(
+    biome.history[biome.time].aborts.length -
+      biome.history[biome.time - 1].aborts.length,
+    3
+  );
+  newDead.textContent = pad(biome.newDead.length, 3);
+  totalDeceased.textContent = biome.dead.length;
+  populationChange.textContent = pad(
+    biome.history[biome.time].livingArray.length -
+      biome.history[biome.time - 1].livingArray.length,
+    3
+  );
+  elapsedTime.textContent = biome.time;
+}
+
+function pad(num, length, withSign = false) {
+  const sign = num < 0 ? "-" : "+";
+  const zeros = "0000000000000000";
+  const str = Math.abs(num).toString();
+  const difference = length - str.length;
+  str = zeros.slice(0, difference) + str;
+  return withSign ? sign + str : str;
 }
