@@ -78,7 +78,7 @@ function positionCanvas() {
 
 function tick() {
   // console.log(timeStep);
-  if (stepsCounter > 2000) {
+  if (stepsCounter > 1000) {
     stepsCounter = 0;
     seedNewBiome();
   }
@@ -232,20 +232,19 @@ function renderReadout(biome) {
   population.textContent = pad(biome.livingArray.length, 3);
   newLife.textContent = pad(
     biome.newLife.length +
-      biome.history[biome.time].aborts.length -
-      biome.history[biome.time - 1].aborts.length,
+      biome.history[biome.time].aborts -
+      biome.history[biome.time - 1].aborts,
     3
   );
   infantMortality.textContent = (
-    (biome.history[biome.time].aborts.length -
-      biome.history[biome.time - 1].aborts.length) /
+    (biome.history[biome.time].aborts - biome.history[biome.time - 1].aborts) /
       Number.parseInt(newLife.textContent) || 0
   ).toFixed(2);
   newDead.textContent = pad(biome.newDead.length, 3);
-  totalDeceased.textContent = biome.dead.length;
+  totalDeceased.textContent = biome.dead;
   populationChange.textContent = pad(
-    biome.history[biome.time].livingArray.length -
-      biome.history[biome.time - 1].livingArray.length,
+    biome.history[biome.time].livingArray -
+      biome.history[biome.time - 1].livingArray,
     3,
     true
   );

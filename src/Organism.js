@@ -59,6 +59,10 @@ export default class Organism {
         this.biome.aborts.push(this);
       }
     }
+
+    // For memory conservation, destroy chain
+    this.parent = null;
+    parent = null;
   }
 
   cullCheck() {
@@ -148,8 +152,7 @@ export default class Organism {
 
   offsetOffspring() {
     /*
-  Create offset relative to this.biome.landscape and
-  this.parent.
+  Create offset relative to this.biome.landscape and parent
   */
     const [height, width] = this.shape;
     const direction = randomInt(0, 4);

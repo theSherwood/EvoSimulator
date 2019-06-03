@@ -14,7 +14,8 @@ export default class Biome {
     this.newDead = [];
     if (this.keepAccounts) {
       // accounting isn't generally necessary (False by default)
-      this.dead = []; // organisms that have died
+      // this.dead = []; // organisms that have died
+      this.dead = 0;
       this.aborts = []; // organisms that couldn't survive where they were spawned
       this.history = {}; // screenshots The Accounts (other than this.history) every timestep
     } else {
@@ -76,7 +77,8 @@ export default class Biome {
         } else {
           this.newDead.push(organism);
           if (this.keepAccounts) {
-            this.dead.push(organism);
+            this.dead++;
+            // this.dead.push(organism);
           } else {
             this.dead++;
           }
@@ -86,11 +88,12 @@ export default class Biome {
     }
     if (this.keepAccounts) {
       this.history[this.time] = {
-        newLife: [...this.newLife],
-        newDead: [...this.newDead],
-        livingArray: [...this.livingArray],
-        dead: [...this.dead],
-        aborts: [...this.aborts]
+        newLife: this.newLife.length,
+        newDead: this.newDead.length,
+        livingArray: this.livingArray.length,
+        // dead: this.dead.length,
+        dead: this.dead,
+        aborts: this.aborts.length
       };
     }
   }
@@ -104,8 +107,8 @@ export default class Biome {
       this.time = 0;
       this.livingArray = [];
       if (this.keepAccounts) {
-        this.dead = [];
-        this.aborts = [];
+        // this.dead = [];
+        (this.dead = 0), (this.aborts = []);
         this.history = {};
       } else {
         this.dead = 0;
